@@ -24,6 +24,11 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        
+        <!-- TEST CONFIGURATION -->
+        <tests.excluded.groups>testing.kineticdata.categories.IntegrationTest,testing.kineticdata.categories.EndToEndTest</tests.excluded.groups>
+        <tests.groups></tests.groups>
+        <tests.skip>false</tests.skip>
     </properties>
     <dependencies>
         <dependency>
@@ -77,6 +82,9 @@
                 <configuration>
                     <!-- Allow the project to be built even if tests are failing. -->
                     <testFailureIgnore>true</testFailureIgnore>
+                    <excludedGroups>${tests.excluded.groups}</excludedGroups>
+                    <groups>${tests.groups}</groups>
+                    <skipTests>${tests.skip}</skipTests>
                 </configuration>
             </plugin>
             <plugin>

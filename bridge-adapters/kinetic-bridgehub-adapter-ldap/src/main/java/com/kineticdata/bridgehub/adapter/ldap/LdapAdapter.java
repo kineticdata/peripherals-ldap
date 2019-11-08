@@ -711,9 +711,9 @@ public class LdapAdapter implements BridgeAdapter {
         public int compare( Record record1, Record record2) {
             int comparison = 0;
             for(String field : fields) {
-                String value1 = record1.getValue(field) == null ? "" 
+                String value1 = record1.getValue(field) == null ? null 
                         : record1.getValue(field).toString();
-                String value2 = record2.getValue(field) == null ? ""
+                String value2 = record2.getValue(field) == null ? null
                         : record2.getValue(field).toString();
                 // If both records are null, continue with the comparison
                 if (value1 == null && value2 == null) {continue;}

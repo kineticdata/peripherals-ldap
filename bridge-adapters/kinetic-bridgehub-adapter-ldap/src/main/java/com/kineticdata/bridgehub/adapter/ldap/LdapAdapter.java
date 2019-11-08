@@ -711,8 +711,10 @@ public class LdapAdapter implements BridgeAdapter {
         public int compare( Record record1, Record record2) {
             int comparison = 0;
             for(String field : fields) {
-                String value1 = record1.getValue(field).toString();
-                String value2 = record2.getValue(field).toString();
+                String value1 = record1.getValue(field) == null ? null 
+                        : record1.getValue(field).toString();
+                String value2 = record2.getValue(field) == null ? null
+                        : record2.getValue(field).toString();
                 // If both records are null, continue with the comparison
                 if (value1 == null && value2 == null) {continue;}
                 // If only value1 is null, return a negative number (indicating
@@ -738,14 +740,5 @@ public class LdapAdapter implements BridgeAdapter {
             }
             return comparison;
         }
-//        
-//        @Override
-//        public int compare(Object record1, Object record2) {
-//            try {
-//                return compare((Map<String,String>)record1, (Map<String,String>)record2);
-//            } catch (ClassCastException e) {
-//                throw new RuntimeException("Unable to compare objects not of type Map<String,String>.", e);
-//            }
-//        }
     }
 }

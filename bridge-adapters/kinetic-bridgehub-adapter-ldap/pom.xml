@@ -3,19 +3,34 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kineticdata.bridges.adapter</groupId>
     <artifactId>kinetic-bridgehub-adapter-ldap</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
     
     <name>kinetic-bridgehub-adapter-ldap</name>
     <scm>
-        <connection>scm:git:https://github.com/kineticcommunity/kinetic-bridgehub-adapter-ldap.git</connection>
-        <developerConnection>scm:git:https://github.com/kineticcommunity/kinetic-bridgehub-adapter-ldap.git</developerConnection>
+        <connection>scm:git:https://github.com/kineticdata/peripherals-ldap.git</connection>
+        <developerConnection>scm:git:https://github.com/kineticdata/peripherals-ldap.git</developerConnection>
     </scm>
 
+    <distributionManagement>
+        <repository>
+            <id>com.kineticdata.public</id>
+            <url>s3://maven-repo-public-kineticdata.com/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>com.kineticdata.public</id>
+            <url>s3://maven-repo-public-kineticdata.com/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <repositories>
         <repository>
-          <id>com.kineticdata</id>
-          <url>http://utilities.kineticdata.com/nexus/content/repositories/releases/</url>
+            <id>z1_com.kineticdata.public</id>
+            <url>https://s3.amazonaws.com/maven-repo-public-kineticdata.com/releases</url>
+        </repository>
+        <repository>
+            <id>z2_com.kineticdata.public</id>
+            <url>https://s3.amazonaws.com/maven-repo-public-kineticdata.com/snapshots</url>
         </repository>
     </repositories>
     
@@ -32,9 +47,10 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.kineticdata.bridges.adapter</groupId>
-            <artifactId>kinetic-bridgehub-adapter</artifactId>
-            <version>1.0.3</version>
+            <groupId>com.kineticdata.agent</groupId>
+            <artifactId>kinetic-agent-adapter</artifactId>
+            <version>1.1.0</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

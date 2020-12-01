@@ -5,19 +5,18 @@ Bridge Configuration:
     Server: ""
     Port: "389"
     Use SSL: "No"
-    Security Principal: "CN=Ldap Proxy,CN=Users,DC=kineticdata,DC=com"
+    Security Principal: "cn=Foo,cn=Users,dc=acme,dc=dev"
     Anonymous Authentication: "No"
     Security Credentials: ""
-    Search Base: "CN=Users,DC=kineticdata,DC=com"
-    Use Pagination: "No"
-    Page Size: "5"
-    Maximun Pages: "10"
+    Search Base: "cn=Users,dc=acme,dc=dev"
+    Page Size: "20"
+    Maximun Pages: "20"
 
 Test Request Configuration:
     Structure: "user"
     Fields: "sn,mail"
-    Single Value Query: "(sAMAccountName=chad.rehm)"
-    Multiple Value Query: "(memberOf=cn=VPN Users,cn=Users,dc=kineticdata,dc=com)"
+    Single Value Query: "(sAMAccountName=foo.bar)"
+    Multiple Value Query: "(memberOf=cn=VPN Users,cn=Users,dc=acme,dc=com)"
     Empty Value Query: ""
 
 # Configuration of the various metadata options

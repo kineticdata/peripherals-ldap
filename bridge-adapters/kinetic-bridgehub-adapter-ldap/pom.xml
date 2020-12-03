@@ -36,14 +36,9 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-        
-        <!-- TEST CONFIGURATION -->
-        <tests.excluded.groups>testing.kineticdata.categories.IntegrationTest,testing.kineticdata.categories.EndToEndTest</tests.excluded.groups>
-        <tests.groups></tests.groups>
-        <tests.skip>false</tests.skip>
     </properties>
     <dependencies>
         <dependency>
@@ -70,6 +65,13 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <extensions>
+            <extension>
+                <groupId>org.springframework.build</groupId>
+                <artifactId>aws-maven</artifactId>
+                <version>5.0.0.RELEASE</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

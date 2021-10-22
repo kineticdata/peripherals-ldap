@@ -12,4 +12,5 @@ LDAP [bridge-adapters] (2020-12-01)
 
 LDAP [bridge-adapters] (2021-10-22)
   * [kinetic-bridgehub-adapter-ldap] 
-    * PER-237 updated search method to prepend to base when new syntax is leverage.  This was already done for retrieve and count.
+    * PER-237 updated search method to prepend to base when new syntax is leverage.  
+    * Added readme and changelog files.

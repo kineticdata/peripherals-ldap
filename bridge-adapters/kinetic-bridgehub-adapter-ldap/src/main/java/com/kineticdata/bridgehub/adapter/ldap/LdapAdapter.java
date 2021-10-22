@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.kineticdata.bridgehub.adapter.ldap;
 
 // Import the necessary core Java classes
@@ -25,7 +21,6 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 // Import servlet libraries
-
 import com.kineticdata.commons.v1.config.ConfigurableProperty;
 import com.kineticdata.commons.v1.config.ConfigurablePropertyMap;
 import java.io.IOException;
@@ -358,7 +353,7 @@ public class LdapAdapter implements BridgeAdapter {
                 // Retrieve the search results
                 NamingEnumeration<SearchResult> searchResults;
                 try {
-                    searchResults = context.search(searchBase, filter, controls);
+                    searchResults = context.search(fullSearchBase, filter, controls);
                 } catch (NamingException e) {
                     throw new BridgeError("Unable to retrieve search results for: "+filter, e);
                 }

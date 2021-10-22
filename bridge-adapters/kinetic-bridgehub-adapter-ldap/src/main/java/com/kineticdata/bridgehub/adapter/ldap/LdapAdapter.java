@@ -314,6 +314,7 @@ public class LdapAdapter implements BridgeAdapter {
         LdapQualificationParser parser = new LdapQualificationParser();
         if (StringUtils.isNotBlank(newSearchBase)) {
             fullSearchBase = parser.parse(newSearchBase, request.getParameters()) + "," + this.searchBase;
+            logger.trace("Using updated search base: " + fullSearchBase);
         } else {
             fullSearchBase = this.searchBase;
         }

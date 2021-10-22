@@ -11,10 +11,6 @@ import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author chad.rehm
- */
 public class LdapAdapterTest extends BridgeAdapterTestBase {
     
     @Override
@@ -80,6 +76,32 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
     } 
     
     @Test
+    public void testSearchFilter() throws Exception{
+        BridgeError error = null;
+        
+        assertNull(error);
+        
+        // Create the Bridge Request
+        List<String> fields = new ArrayList<String>();
+        fields.add("name");
+        
+        BridgeRequest request = new BridgeRequest();
+        request.setStructure("user");
+        request.setFields(fields);
+        request.setQuery("(mail=*)");
+        
+        RecordList list = null;
+        try {
+            list = getAdapter().search(request);
+        } catch (BridgeError e) {
+            error = e;
+        }
+        
+        assertNull(error);
+        assertTrue(list.getRecords().size() > 0);
+    } 
+    
+    @Test
     public void testMultiSearch() throws Exception{
         BridgeError error = null;
         
@@ -106,7 +128,7 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
         assertTrue(list.getRecords().size() > 0);
     }
     
-        @Test
+    @Test
     public void test_singleRetrieve() throws Exception {
         BridgeRequest request = new BridgeRequest();
         

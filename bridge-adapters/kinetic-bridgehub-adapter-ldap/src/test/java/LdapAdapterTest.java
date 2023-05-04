@@ -8,6 +8,9 @@ import com.kineticdata.bridgehub.adapter.ldap.LdapAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONValue;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -30,7 +33,7 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
         assertNull(error);
         
         // Create the Bridge Request
-        List<String> fields = new ArrayList<String>();
+        List<String> fields = new ArrayList<>();
         fields.add("sn,mail");
         
         BridgeRequest request = new BridgeRequest();
@@ -56,13 +59,14 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
         assertNull(error);
         
         // Create the Bridge Request
-        List<String> fields = new ArrayList<String>();
-        fields.add("name");
+        List<String> fields = new ArrayList<>();
+        fields.add("memberOf");
+        fields.add("cn");
         
         BridgeRequest request = new BridgeRequest();
-        request.setStructure("user");
+        request.setStructure("User");
         request.setFields(fields);
-        request.setQuery("");
+        request.setQuery("(sAMAccountName=mary.olowu)");
         
         RecordList list = null;
         try {
@@ -70,7 +74,10 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
         } catch (BridgeError e) {
             error = e;
         }
-        
+
+        Object str = JSONValue.parse((String)list.getRecords().get(0).getValue("memberOf"));
+
+        assertTrue(str instanceof JSONArray);
         assertNull(error);
         assertTrue(list.getRecords().size() > 0);
     } 
@@ -82,7 +89,7 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
         assertNull(error);
         
         // Create the Bridge Request
-        List<String> fields = new ArrayList<String>();
+        List<String> fields = new ArrayList<>();
         fields.add("name");
         
         BridgeRequest request = new BridgeRequest();
@@ -108,7 +115,7 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
         assertNull(error);
         
         // Create the Bridge Request
-        List<String> fields = new ArrayList<String>();
+        List<String> fields = new ArrayList<>();
         fields.add("sn");
         fields.add("mail");
         
@@ -133,7 +140,7 @@ public class LdapAdapterTest extends BridgeAdapterTestBase {
         BridgeRequest request = new BridgeRequest();
         
         // Create the Bridge Request
-        List<String> fields = new ArrayList<String>();
+        List<String> fields = new ArrayList<>();
         fields.add("sn");
         fields.add("mail");
         

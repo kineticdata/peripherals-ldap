@@ -24,6 +24,8 @@ import java.util.regex.Matcher;
 import com.kineticdata.commons.v1.config.ConfigurableProperty;
 import com.kineticdata.commons.v1.config.ConfigurablePropertyMap;
 import java.io.IOException;
+
+import org.json.simple.JSONValue;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -677,9 +679,14 @@ public class LdapAdapter implements BridgeAdapter {
                     } catch (ParseException e) {
                         throw new BridgeError("Unable to parse date value: "+value, e);
                     }
-                }
+                // Multiple results found for attribute
+                } else if (attribute.size() > 1) {
+                    // attribute.getAll returns a NamingEnumeration<capture of ?>
+                    List list = Collections.list(attribute.getAll());
+
+                    value = JSONValue.toJSONString(list);
                 // If the attribute is not a type that needs translating
-                else {
+                } else {
                     // Set the value to be the string value
                     value = attribute.get().toString();
                 }

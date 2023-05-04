@@ -10,7 +10,7 @@ Bridge Configuration:
     Security Credentials: ""
     Search Base: "cn=Users,dc=acme,dc=dev"
     Page Size: "20"
-    Maximun Pages: "20"
+    Maximum Pages: "20"
 
 Test Request Configuration:
     Structure: "user"

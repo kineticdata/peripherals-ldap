@@ -7,3 +7,7 @@ Ldap Adapter v1.0.3 (2020-12-01)
 Ldap Adapter v1.0.4 (2021-10-22)
     * PER-237 updated search method to prepend to base when new syntax is leverage.  This was already done for retrieve and count.
     * Added readme and changelog files. 
+
+Ldap Adapter v1.0.5 (2023-05-04)
+  * KP-6570 added support for returning ldap attributes the have multiple values.
+  * This was a fix for USDA.

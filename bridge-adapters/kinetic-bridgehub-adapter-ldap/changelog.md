@@ -10,4 +10,5 @@ Ldap Adapter v1.0.4 (2021-10-22)
 
 Ldap Adapter v1.0.5 (2023-05-04)
   * KP-6570 added support for returning ldap attributes the have multiple values.
+  * Vector attributes, such as memberOf, would previously return the first member but will now return a JSON array of strings.
   * This was a fix for USDA.

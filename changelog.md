@@ -14,3 +14,9 @@ LDAP [bridge-adapters] (2021-10-22)
   * [kinetic-bridgehub-adapter-ldap] 
     * PER-237 updated search method to prepend to base when new syntax is leverage.  
     * Added readme and changelog files.
+
+LDAP [bridge-adapters] (2023-05-04)
+  * [kinetic-bridgehub-adapter-ldap] 
+    * KP-6570 added support for returning ldap attributes the have multiple values.
+    * Vector attributes, such as memberOf, would previously return the first member but will now return a JSON array of strings.
+

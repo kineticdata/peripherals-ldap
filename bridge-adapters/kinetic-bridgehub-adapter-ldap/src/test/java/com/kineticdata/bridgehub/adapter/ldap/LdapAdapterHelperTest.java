@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class LdapAdapterTest {
+public class LdapAdapterHelperTest {
 
     @Test
     public void test_buildFilter_emptyQuery() {
@@ -53,6 +53,25 @@ public class LdapAdapterTest {
         String query = "(samaccountname=<%=parameter[\"samaccountname\"]%>)";
         Map parameters = new HashMap();
         parameters.put("samaccountname", "userid");
+        String structure = "user";
+
+        String filter = null;
+        try {
+            filter = adapter.buildFilter(query, parameters, structure);
+        } catch (BridgeError e) {
+            BridgeError unexpectedError = e;
+        }
+
+        assertEquals("(&(objectClass=user)(samaccountname=userid))", filter);
+    }
+
+    @Test
+    public void test_buildFilter_withParensInParams() {
+        LdapAdapter adapter = new LdapAdapter();
+
+        String query = "<%=parameter[\"a_query\"]%>";
+        Map parameters = new HashMap();
+        parameters.put("a_query", "(samaccountname=userid)");
         String structure = "user";
 
         String filter = null;

@@ -184,18 +184,13 @@ public class LdapAdapter implements BridgeAdapter {
     public Count count(BridgeRequest request) throws BridgeError {
         // Build the context
         LdapContext context = buildContext(environment);
-        // Build the query filter
-        String filter = buildFilter(request);
 
-        // Prepend the search base that was sent in the query (if applicable)
-        String newSearchBase = request.getQuery().replaceAll("\\(.*\\)", "");
-        String fullSearchBase;
-        LdapQualificationParser parser = new LdapQualificationParser();
-        if (StringUtils.isNotBlank(newSearchBase)) {
-            fullSearchBase = parser.parse(newSearchBase, request.getParameters()) + "," + this.searchBase;
-        } else {
-            fullSearchBase = this.searchBase;
-        }
+        // Build the query filter
+        String filter = buildFilter(request.getQuery(), request.getParameters(), request.getStructure());
+
+        // Build the search base
+        String fullSearchBase = buildSearchBase(request.getQuery(), request.getParameters(), this.searchBase);
+
         Long count = 0L;
         logger.trace("  Query with parameter values: " + filter);
 
@@ -234,18 +229,12 @@ public class LdapAdapter implements BridgeAdapter {
     public Record retrieve(BridgeRequest request) throws BridgeError {
         // Build the context
         LdapContext context = buildContext(environment);
-        // Build the query filter
-        String filter = buildFilter(request);
 
-        // Prepend the search base that was sent in the query (if applicable)
-        String newSearchBase = request.getQuery().replaceAll("\\(.*\\)", "");
-        String fullSearchBase;
-        LdapQualificationParser parser = new LdapQualificationParser();
-        if (StringUtils.isNotBlank(newSearchBase)) {
-            fullSearchBase = parser.parse(newSearchBase, request.getParameters()) + "," + this.searchBase;
-        } else {
-            fullSearchBase = this.searchBase;
-        }
+        // Build the query filter
+        String filter = buildFilter(request.getQuery(), request.getParameters(), request.getStructure());
+
+        // Build the search base
+        String fullSearchBase = buildSearchBase(request.getQuery(), request.getParameters(), this.searchBase);
         
         logger.trace("  Query with parameter values: " + filter);
         // Initialize the result record
@@ -307,25 +296,18 @@ public class LdapAdapter implements BridgeAdapter {
     public RecordList search(BridgeRequest request) throws BridgeError {
         // Build the context
         InitialLdapContext context = buildContext(environment);
-        // Build the query filter
-        String filter = buildFilter(request);
 
-        // Prepend the search base that was sent in the query (if applicable)
-        String newSearchBase = request.getQuery().replaceAll("\\(.*\\)", "");
-        String fullSearchBase;
-        LdapQualificationParser parser = new LdapQualificationParser();
-        if (StringUtils.isNotBlank(newSearchBase)) {
-            fullSearchBase = parser.parse(newSearchBase, request.getParameters()) + "," + this.searchBase;
-            logger.trace("Using updated search base: " + fullSearchBase);
-        } else {
-            fullSearchBase = this.searchBase;
-        }
-        
+        // Build the query filter
+        String filter = buildFilter(request.getQuery(), request.getParameters(), request.getStructure());
+
+        // Build the search base
+        String fullSearchBase = buildSearchBase(request.getQuery(), request.getParameters(), this.searchBase);
+
         logger.trace("  Query with parameter values: " + filter);
-        
-        // Initialzie the records list
+
+        // Initialize the records list
         List<Record> records = new ArrayList<Record>();
-        
+
         // Build the metadata
         Map<String,String> metadata = new LinkedHashMap();
 
@@ -385,10 +367,10 @@ public class LdapAdapter implements BridgeAdapter {
                 // Re-activate paged results
                 context.setRequestControls(new Control[]{new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
             }
-            
+
             // Sort the list
             Collections.sort(records, new RecordComparator(fields));
-            
+
             metadata.put("size", String.valueOf(records.size()));
             if (records.size() == page*pageSize) {
                 metadata.put("limitReached", "true");
@@ -620,30 +602,53 @@ public class LdapAdapter implements BridgeAdapter {
         return context;
     }
 
-    private String buildFilter(BridgeRequest request) throws BridgeError {
-        Pattern pattern = Pattern.compile("\\(.*\\)");
-        Matcher matcher = pattern.matcher(request.getQuery());
-        
-        // Using a regex to filter out the part of the requestQuery that will
-        // used for the filter and the part that will be added to the search base
-        String filterQuery = "";
-        if (matcher.find()) {
-            filterQuery = matcher.group();
-        }
-                
-        // Merge the object class filter segment with the desired filter
-        String query = "(objectClass="+request.getStructure()+")";
-        if (StringUtils.isNotBlank(filterQuery)) {
-            query = "(&"+query+filterQuery+")";
-        }
-
-        // Initialize a new qualification parser to automatically replace
-        // parameter values
+    String buildSearchBase(String query, java.util.Map<String, String> parameters, String bridgeSearchBase) throws BridgeError {
+        // Parse the query using the provided parameters first
+        // <%=parameter["Search String"]%> with "Search String" = (samaccountname=*) becomes (samaccountname=*)
+        // (samaccountname=<%=parameter["samaccountname"]%>) with "samaccountname" = "*" becomes (samaccountname=*)
+        // OU=SomeOU(samaccountname=<%=parameter["samaccountname"]%>) with "samaccountname" = "*" becomes OU=SomeOU(samaccountname=*)
+        // OU=<%=parameter["OU"]%>(samaccountname=<%=parameter["samaccountname"]%>) with "OU" = "SomeOU" and "samaccountname" = "*" becomes OU=SomeOU(samaccountname=*)
         LdapQualificationParser parser = new LdapQualificationParser();
-        String filter = parser.parse(query, request.getParameters());
+        String parsedFilter = parser.parse(query, parameters);
 
-        // Returned the query string
-        return filter;
+        // Replace any "queries" () within the query with an empty string, leaving us with only strings outside the queries
+        String searchBaseAppend = parsedFilter.replaceAll("\\(.*\\)", "");
+
+        // If anything is leftover, we're making the assumption it is an addition to the search base defined by the bridge
+        if (StringUtils.isNotBlank(searchBaseAppend)) {
+            return searchBaseAppend + "," + bridgeSearchBase;
+        } else {
+            return bridgeSearchBase;
+        }
+    }
+
+    String buildFilter(String query, java.util.Map<String, String> parameters, String structure) throws BridgeError {
+        // Parse the query using the provided parameters first
+        // <%=parameter["Search String"]%> with "Search String" = (samaccountname=*) becomes (samaccountname=*)
+        // (samaccountname=<%=parameter["samaccountname"]%>) with "samaccountname" = "*" becomes (samaccountname=*)
+        // OU=SomeOU(samaccountname=<%=parameter["samaccountname"]%>) with "samaccountname" = "*" becomes OU=SomeOU(samaccountname=*)
+        // OU=<%=parameter["OU"]%>(samaccountname=<%=parameter["samaccountname"]%>) with "OU" = "SomeOU" and "samaccountname" = "*" becomes OU=SomeOU(samaccountname=*)
+        LdapQualificationParser parser = new LdapQualificationParser();
+        String filter = parser.parse(query, parameters);
+
+        // Find any "queries" () within the query, this is the query being passed into the bridge
+        Pattern pattern = Pattern.compile("\\(.*\\)");
+        Matcher matcher = pattern.matcher(filter);
+
+        String userFilter = "";
+        if (matcher.find()) {
+            userFilter = matcher.group();
+        }
+
+        // We restrict the filter to the objectClass specified on the Structure
+        String objectClassFilter = "(objectClass="+structure+")";
+
+        // If a user filter was provided, we append it to our object class filter, otherwise we just return the objectclass filter
+        if (StringUtils.isNotBlank(userFilter)) {
+            return "(&" + objectClassFilter + userFilter + ")";
+        } else {
+            return objectClassFilter;
+        }
     }
 
     private Map<String,Object> buildRecordMap(List<String> fields, SearchResult entry) throws BridgeError, NamingException {

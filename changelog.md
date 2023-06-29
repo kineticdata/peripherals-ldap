@@ -20,3 +20,7 @@ LDAP [bridge-adapters] (2023-05-04)
     * KP-6570 added support for returning ldap attributes the have multiple values.
     * Vector attributes, such as memberOf, would previously return the first member but will now return a JSON array of strings.
 
+LDAP [bridge-adapters] (2023-06-39)
+  * [kinetic-bridgehub-adapter-ldap]
+    * KP-6837: Do parameter parsing before filter and search base manipulation.  Allows setting queries `(samaccountname=an_id)` where only a parameter is in the qualification `${parameters('a-query')}`.
+    * Expanded unit and integration tests.
